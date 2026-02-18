@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div style="display:flex; justify-content:center; align-items:center; min-height:75vh;">
+
+  <div class="card pad" style="width:100%; max-width:460px;">
+
+    <div style="text-align:center; margin-bottom:20px;">
+      <span class="badge">Create Account</span>
+      <h1 style="margin-top:10px;">Sign Up</h1>
+      <p class="muted" style="margin-top:6px;">
+        Create an account to access the converter.
+      </p>
+    </div>
+
+    <form method="post" style="display:flex; flex-direction:column; gap:16px;">
+      {% csrf_token %}
+
+      {% for field in form %}
+        <div>
+          <label style="display:block; font-weight:700; margin-bottom:6px;">
+            {{ field.label }}
+          </label>
+
+          {{ field }}
+
+          {% if field.help_text %}
+            <div class="muted" style="font-size:13px; margin-top:4px;">
+              {{ field.help_text }}
+            </div>
+          {% endif %}
+
+          {% if field.errors %}
+            <div class="errorlist">
+              {{ field.errors }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="submit" style="margin-top:10px;">
+        Sign Up
+      </button>
+    </form>
+
+    <div style="margin-top:20px; text-align:center;">
+      <span class="muted" style="font-size:14px;">
+        Already have an account?
+      </span>
+      <a href="{% url 'login' %}" style="margin-left:6px; font-weight:700;">
+        Log In
+      </a>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

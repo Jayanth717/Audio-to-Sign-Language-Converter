@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div style="display:flex; justify-content:center; align-items:center; min-height:70vh;">
+
+  <div class="card pad" style="width:100%; max-width:420px;">
+
+    <div style="text-align:center; margin-bottom:18px;">
+      <span class="badge">Authentication</span>
+      <h1 style="margin-top:10px;">Log In</h1>
+      <p class="muted" style="margin-top:6px;">
+        Access your account to continue.
+      </p>
+    </div>
+
+    <form method="post" style="display:flex; flex-direction:column; gap:14px;">
+      {% csrf_token %}
+
+      <!-- Render Django form fields manually styled -->
+      {% for field in form %}
+        <div>
+          <label style="display:block; font-weight:700; margin-bottom:6px;">
+            {{ field.label }}
+          </label>
+          {{ field }}
+          {% if field.errors %}
+            <div class="errorlist">{{ field.errors }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      {% if request.GET.next %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+      {% endif %}
+
+      <button type="submit" class="submit" style="margin-top:10px;">
+        Log In
+      </button>
+    </form>
+
+    <div style="margin-top:18px; text-align:center;">
+      <span class="muted" style="font-size:14px;">
+        Don't have an account?
+      </span>
+      <a href="{% url 'signup' %}" style="margin-left:6px; font-weight:700;">
+        Sign Up
+      </a>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

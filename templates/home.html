@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="hero">
+  <span class="badge">Assistive AI • Speech → Sign</span>
+  <h1>Audio to Sign Language Converter</h1>
+  <p class="muted">
+    Convert spoken audio (or typed text) into sign language animations using speech recognition and NLP-based keyword mapping.
+  </p>
+</div>
+
+<div class="grid" style="margin-top:22px; padding-bottom:40px; grid-template-columns: repeat(12, 1fr); gap:16px;">
+
+  <!-- Left: Video Preview -->
+  <div class="col-6">
+    <div class="card pad">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+        <div>
+          <div style="font-weight:900; font-size:18px;">Preview</div>
+          <div class="muted" style="margin-top:6px;">A quick sample of sign animation playback.</div>
+        </div>
+        <span class="badge">Looping demo</span>
+      </div>
+
+      <div class="card" style="margin-top:14px; overflow:hidden;">
+        <div style="background: rgba(0,0,0,.25); padding:12px;">
+          <video style="width:100%; height:auto; border-radius:14px; display:block;" autoplay loop muted playsinline>
+            <source src="{% static 'Hello.mp4' %}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+
+      <p class="muted" style="margin-top:12px; font-size:13px;">
+        Tip: Use the mic for real-time speech-to-text, then play sign videos for extracted keywords.
+      </p>
+    </div>
+  </div>
+
+  <!-- Right: CTA + Features -->
+  <div class="col-6">
+    <div class="card pad" style="height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+      <div>
+        <div style="font-weight:900; font-size:18px;">Start Converting</div>
+        <p class="muted" style="margin-top:10px; line-height:1.7;">
+          Speak or type a sentence, extract meaningful keywords, and preview corresponding sign animations — all inside your browser.
+        </p>
+
+        <div style="margin-top:16px; display:grid; gap:10px;">
+          <div class="card pad" style="background: rgba(255,255,255,.03);">
+            <div style="font-weight:800;">🎙️ Speech-to-Text</div>
+            <div class="muted" style="margin-top:6px;">Capture audio using your microphone and generate a transcript.</div>
+          </div>
+
+          <div class="card pad" style="background: rgba(255,255,255,.03);">
+            <div style="font-weight:800;">🧠 Keyword Extraction</div>
+            <div class="muted" style="margin-top:6px;">NLP processing detects important words for sign mapping.</div>
+          </div>
+
+          <div class="card pad" style="background: rgba(255,255,255,.03);">
+            <div style="font-weight:800;">🤟 Animation Playback</div>
+            <div class="muted" style="margin-top:6px;">Plays sign videos in sequence for detected keywords.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px; display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="{% url 'animation' %}" class="btn btn-primary" style="padding:12px 16px;">
+          ▶ Start Converting
+        </a>
+        <a href="{% url 'about' %}" class="btn">
+          Learn More
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container hero">
+    <span class="badge">Project Overview</span>
+    <h1>About This Project</h1>
+    <p class="muted">
+        Audio Speech to Sign Language Converter is an interactive web application 
+        designed to bridge communication gaps by transforming spoken language into 
+        visual sign language animations.
+    </p>
+</div>
+
+<div class="container" style="padding-bottom:40px;">
+    <div class="card pad">
+
+        <h2 style="margin-top:0;">What It Does</h2>
+        <p class="muted" style="line-height:1.7;">
+            The system captures spoken audio, converts it into text using speech recognition, 
+            processes the transcript using Natural Language Processing (NLP), 
+            and displays corresponding sign language animations based on detected keywords.
+        </p>
+
+        <hr style="border-color:var(--border); margin:24px 0;">
+
+        <h2>Key Features</h2>
+        <ul class="muted" style="line-height:1.8;">
+            <li> Real-time Speech-to-Text Conversion</li>
+            <li> NLP-based Keyword Detection</li>
+            <li> Dynamic Sign Language Animation Playback</li>
+            <li> Web-based Interactive Interface</li>
+        </ul>
+
+        <hr style="border-color:var(--border); margin:24px 0;">
+
+        <h2>Purpose</h2>
+        <p class="muted" style="line-height:1.7;">
+            This project demonstrates how speech recognition and natural language 
+            processing can be integrated into assistive technology systems to 
+            promote accessibility and inclusive communication.
+        </p>
+
+        <div style="margin-top:28px;">
+            <span class="badge">Version 1.0.0</span>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

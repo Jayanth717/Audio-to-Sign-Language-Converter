@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container hero">
+  <span class="badge">Converter</span>
+  <h1>Speech / Text to Sign Animation</h1>
+  <p class="muted">
+    Speak into the microphone or type a sentence. The system extracts keywords and plays matching sign animations.
+  </p>
+</div>
+
+<div class="container grid" style="padding-bottom:40px;">
+
+  <!-- LEFT: Input + transcript -->
+  <div class="col-6">
+    <div class="card pad">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;">
+        <div>
+          <div style="font-weight:800; font-size:18px;">Input</div>
+          <div class="muted" style="margin-top:6px;">Enter text or use the mic to generate a transcript.</div>
+        </div>
+
+        <!-- Mic button -->
+        <button type="button" class="btn" id="micBtn" onclick="record()" title="Start voice input">
+          <img src="{% static 'mic3.png' %}" alt="Mic" style="height:22px; width:22px;">
+          <span style="font-weight:700;">Mic</span>
+        </button>
+      </div>
+
+      <form action="" method="post" style="margin-top:16px;">
+        {% csrf_token %}
+        <div class="card pad" style="display:flex; gap:10px; align-items:center;">
+          <input
+            type="text"
+            name="sen"
+            class="mytext"
+            id="speechToText"
+            placeholder="Type your sentence here…"
+            style="
+              flex:1;
+              padding:12px 12px;
+              border-radius:14px;
+              border:1px solid var(--border);
+              background: rgba(255,255,255,.03);
+              color: var(--text);
+              outline: none;
+            "
+          >
+          <input type="submit" name="submit" class="btn btn-primary" value="Convert">
+        </div>
+      </form>
+
+      <div style="margin-top:16px;" class="card pad">
+        <div style="font-weight:800;">Transcript</div>
+        <div class="muted" style="margin-top:8px;">
+          {{ text|default:"Your transcript will appear here after converting…" }}
+        </div>
+      </div>
+
+      <div style="margin-top:16px;" class="card pad">
+        <div style="font-weight:800;">Detected Keywords</div>
+
+        <div id="list"
+             style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          {% for word in words %}
+            <span class="badge keyword" data-word="{{ word }}">{{ word }}</span>
+          {% empty %}
+            <span class="muted">No keywords yet.</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Video panel -->
+  <div class="col-6">
+    <div class="card pad">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:14px;">
+        <div>
+          <div style="font-weight:800; font-size:18px;">Sign Language Animation</div>
+          <div class="muted" style="margin-top:6px;">Play sign videos mapped to extracted keywords.</div>
+        </div>
+
+        <button class="btn btn-primary" type="button" onclick="playPause()">Play / Pause</button>
+      </div>
+
+      <div class="card" style="margin-top:14px; overflow:hidden; border-radius:18px;">
+        <div style="background: rgba(0,0,0,.25); padding:12px;">
+          <video id="videoPlayer"
+                 style="width:100%; height:auto; border-radius:14px; display:block;"
+                 preload="auto"
+                 autoplay>
+            <source src="" type="video/mp4">
+            Your browser does not support HTML5 video.
+          </video>
+        </div>
+      </div>
+
+      <div class="muted" style="margin-top:12px; font-size:13px;">
+        Tip: Click “Play / Pause” after converting to play through the detected keyword sequence.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Speech-to-text (webkitSpeechRecognition)
+  function record(){
+    var recognition = new webkitSpeechRecognition();
+    recognition.lang = 'en-IN';
+
+    // visual feedback
+    const micBtn = document.getElementById("micBtn");
+    micBtn.style.opacity = "0.85";
+    micBtn.style.transform = "translateY(-1px)";
+
+    recognition.onresult = function(event){
+      document.getElementById('speechToText').value = event.results[0][0].transcript;
+      micBtn.style.opacity = "1";
+      micBtn.style.transform = "translateY(0px)";
+    }
+
+    recognition.onerror = function(){
+      micBtn.style.opacity = "1";
+      micBtn.style.transform = "translateY(0px)";
+    }
+
+    recognition.onend = function(){
+      micBtn.style.opacity = "1";
+      micBtn.style.transform = "translateY(0px)";
+    }
+
+    recognition.start();
+  }
+
+  // Build playlist from keyword chips
+  function play(){
+    var videoSource = [];
+    var chips = document.querySelectorAll("#list .keyword");
+
+    for (var j = 0; j < chips.length; j++){
+      var word = chips[j].getAttribute("data-word");
+      videoSource[j] = "/static/" + word + ".mp4";
+    }
+
+    var i = 0;
+    var videoCount = videoSource.length;
+
+    if(videoCount === 0){
+      alert("No keywords found to play.");
+      return;
+    }
+
+    function highlightChip(idx, active){
+      chips[idx].style.borderColor = active ? "rgba(199,179,156,.55)" : "rgba(255,255,255,.08)";
+      chips[idx].style.background = active ? "rgba(90,125,143,.18)" : "rgba(255,255,255,.04)";
+      chips[idx].style.color = active ? "#E8EDF2" : "#A7B3BE";
+      chips[idx].style.fontWeight = active ? "800" : "600";
+    }
+
+    function videoPlay(videoNum){
+      for (var k = 0; k < chips.length; k++){
+        highlightChip(k, k === videoNum);
+      }
+      document.getElementById("videoPlayer").setAttribute("src", videoSource[videoNum]);
+      document.getElementById("videoPlayer").load();
+      document.getElementById("videoPlayer").play();
+    }
+
+    // Ensure we don't stack multiple event listeners
+    const vp = document.getElementById("videoPlayer");
+    vp.onended = function(){
+      highlightChip(i, false);
+      i++;
+      if(i >= videoCount){
+        vp.pause();
+        return;
+      }
+      videoPlay(i);
+    };
+
+    videoPlay(0);
+  }
+
+  function playPause(){
+    var vp = document.getElementById("videoPlayer");
+    if (vp.paused){
+      play();
+    } else {
+      vp.pause();
+    }
+  }
+</script>
+
+{% endblock %}
